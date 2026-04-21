@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.models import Product
+from app.models import Product, Category
 from app.services.product_service import ProductService
 from app.services.warehouse_service import WarehouseService
 
@@ -67,6 +67,16 @@ class ChatbotCatalogService:
         "với",
     }
 
+    _CATEGORY_ALIASES = {
+        "Mu bao hiem 1/2": ("non 1/2", "mu 1/2", "1/2", "non nua dau", "nua dau"),
+        "Mu FULLFACE": ("fullface", "full face", "non fullface"),
+        "Mu bao hiem 3/4": ("3/4", "non 3/4", "mu 3/4"),
+        "Mu tre em": ("non tre em", "mu tre em", "tre em"),
+        "Mu lat ham": ("lat ham", "ham", "non lat ham"),
+        "Mu xe dap": ("non xe dap", "mu xe dap", "xe dap"),
+    }
+
+
     @staticmethod
     def _normalize_text(value: Optional[str]) -> str:
         raw = (value or "").strip().lower().replace("đ", "d")
@@ -103,6 +113,47 @@ class ChatbotCatalogService:
                 continue
             return int(amount * multiplier)
         return None
+    
+
+    # hàm lấy cả sticker còn hạn dựa trên tên sản phẩm
+    @staticmethod
+    def resolve_categories_from_query(db: Session, query: str) -> List[Category]:
+        normalized_query = ChatbotCatalogService._normalize_text(query)
+        if not normalized_query:
+            return []
+
+        categories = db.query(Category).order_by(Category.id.asc()).all()
+        matched_by_id: Dict[int, Category] = {}
+
+        for category in categories:
+            normalized_name = ChatbotCatalogService._normalize_text(
+                getattr(category, "name", "")
+            )
+            if normalized_name and normalized_name in normalized_query:
+                matched_by_id[category.id] = category
+                continue
+
+            for aliases in ChatbotCatalogService._CATEGORY_ALIASES.values():
+                if any(alias in normalized_query for alias in aliases):
+                    if any(alias in normalized_name for alias in aliases):
+                        matched_by_id[category.id] = category
+                        break
+
+        if matched_by_id:
+            return list(matched_by_id.values())
+
+        candidate_products = ChatbotCatalogService.search_products(
+            db=db,
+            query=query,
+            limit=settings.CHATBOT_MAX_PRODUCTS,
+        )
+        candidate_category_ids = {
+            item["category_id"]
+            for item in candidate_products
+            if isinstance(item.get("category_id"), int)
+        }
+        return [category for category in categories if category.id in candidate_category_ids]
+
 
     @staticmethod
     def _pick_image_url(product: Product, color_id: Optional[int] = None) -> Optional[str]:

@@ -331,6 +331,22 @@ class OrderService:
         )
         return OrderService._sync_payment_statuses(db, orders)
 
+    # Hàm truy vấn đơn hàng mới nhất của một người dùng cụ thể
+    @staticmethod
+    def get_latest_order(db: Session, user_id: int) -> Optional[Order]:
+        order = (
+            OrderService._base_order_query(db)
+            .filter(Order.user_id == user_id)
+            .order_by(Order.created_at.desc())
+            .first()
+        )
+        if not order:
+            return None
+
+        OrderService._sync_payment_statuses(db, [order])
+        return order
+
+
     @staticmethod
     def get_orders2(db: Session, user_id: int) -> List[Order]:
         return db.query(Order).filter(Order.user_id == user_id).all()

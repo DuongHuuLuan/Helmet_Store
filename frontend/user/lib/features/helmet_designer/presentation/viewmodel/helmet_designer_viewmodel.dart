@@ -242,7 +242,7 @@ class HelmetDesignerViewModel extends ChangeNotifier {
     StickerTemplate template, {
     double x = 0.5,
     double y = 0.5,
-    double scale = 0.6,
+    double scale = 0.65,
     double rotation = 0,
   }) {
     final layer = StickerLayer(

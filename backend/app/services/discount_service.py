@@ -180,6 +180,43 @@ class DiscountService(BaseService):
             if discount.category_id not in result:
                 result[discount.category_id] = discount
         return result
+## hàm lấy cả sticker còn hạn dựa trên danh mục
+    @staticmethod
+    def list_valid_discounts_by_category_ids(
+        db: Session,
+        category_ids: Iterable[int],
+        limit: Optional[int] = None,
+    ) -> List[Discount]:
+        normalized_ids = list(
+            dict.fromkeys(
+                int(category_id)
+                for category_id in category_ids
+                if isinstance(category_id, int)
+            )
+        )
+        if not normalized_ids:
+            return []
+
+        now = datetime.now()
+        query = (
+            db.query(Discount)
+            .filter(
+                Discount.category_id.in_(normalized_ids),
+                Discount.status == DiscountStatus.ACTIVE,
+                Discount.start_at <= now,
+                Discount.end_at >= now,
+            )
+            .order_by(
+                Discount.percent.desc(),
+                Discount.end_at.asc(),
+                Discount.id.desc(),
+            )
+        )
+
+        if isinstance(limit, int) and limit > 0:
+            query = query.limit(limit)
+
+        return query.all()
 
 
     @staticmethod

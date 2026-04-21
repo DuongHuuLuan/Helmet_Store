@@ -189,6 +189,7 @@ class _InteractiveStickerLayerState extends State<_InteractiveStickerLayer> {
               color: Colors.white.withOpacity(0.12),
             ),
             child: Stack(
+              clipBehavior: Clip.none,
               children: [
                 Positioned.fill(
                   child: _StickerImage(
@@ -199,20 +200,17 @@ class _InteractiveStickerLayerState extends State<_InteractiveStickerLayer> {
                 ),
                 if (isSelected && isInteractive)
                   Positioned(
-                    right: 6,
-                    top: 6,
+                    right: -20,
+                    top: -20,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 4,
-                      ),
+                      padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.62),
-                        borderRadius: BorderRadius.circular(999),
+                        color: Colors.black.withOpacity(0.7),
+                        shape: BoxShape.circle,
                       ),
                       child: const Icon(
                         Icons.open_with,
-                        size: 15,
+                        size: 30,
                         color: Colors.white,
                       ),
                     ),
