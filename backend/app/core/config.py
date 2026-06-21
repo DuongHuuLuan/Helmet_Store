@@ -1,11 +1,4 @@
-# from pydantic import BaseModel
 
-# class Settings(BaseModel):
-#     PROJECT_NAME: str ="Ung dung cua hang non bao hiem"
-
-#     SQLALCHMY_DATABASE_URI: str = "sql:///./app.db"
-
-# settings = Settings()
 import os
 from urllib.parse import quote_plus
 from dotenv import load_dotenv
