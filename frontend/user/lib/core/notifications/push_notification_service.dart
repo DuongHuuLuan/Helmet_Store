@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:b2205946_duonghuuluan_luanvan/core/notifications/push_notification_api.dart';
 import 'package:b2205946_duonghuuluan_luanvan/core/storage/secure_storage.dart';
+import 'package:b2205946_duonghuuluan_luanvan/injection_container.dart' as di;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -32,7 +33,7 @@ class PushNotificationService {
   final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
   final PushNotificationApi _api = PushNotificationApi();
-  final SecureStorage _storage = SecureStorage();
+  final SecureStorageService _storage = di.getIt<SecureStorageService>();
 
   GoRouter? _router;
   StreamSubscription<String>? _tokenRefreshSubscription;
@@ -168,9 +169,7 @@ class PushNotificationService {
             _handleNotificationNavigation(Map<String, dynamic>.from(data));
             return;
           }
-        } catch (_) {
-          // Fall back to generic chat route.
-        }
+        } catch (_) {}
 
         _openRouteOrDefer("/chat");
       },
@@ -267,9 +266,7 @@ class PushNotificationService {
   }
 
   void _flushPendingNavigation() {
-    if (_pendingNavigationPath != null &&
-        _router != null &&
-        _navigationReady) {
+    if (_pendingNavigationPath != null && _router != null && _navigationReady) {
       final path = _pendingNavigationPath!;
       _pendingNavigationPath = null;
       _router!.go(path);
