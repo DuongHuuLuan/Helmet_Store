@@ -1,11 +1,4 @@
-# from pydantic import BaseModel
 
-# class Settings(BaseModel):
-#     PROJECT_NAME: str ="Ung dung cua hang non bao hiem"
-
-#     SQLALCHMY_DATABASE_URI: str = "sql:///./app.db"
-
-# settings = Settings()
 import os
 from urllib.parse import quote_plus
 from dotenv import load_dotenv
@@ -36,6 +29,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = os.getenv("SECRET_KEY", "default_secret_key_if_not_found")
     ALGORITHM: str = os.getenv("ALGORITHM", "HS256")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60))
+    REFRESH_TOKEN_EXPIRE_DAYS: int = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", 7))
 
 
     #cloudirary

@@ -16,3 +16,5 @@ alembic/versions/*.pyc
 Thumbs.db
 
 app/core/firebase-credentials.json
+__pycache__/
+*.py[cod]

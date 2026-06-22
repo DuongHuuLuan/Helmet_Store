@@ -1,15 +1,17 @@
 import 'package:b2205946_duonghuuluan_luanvan/core/constants/api_endpoints.dart';
-import 'package:b2205946_duonghuuluan_luanvan/core/network/dio_client.dart';
 import 'package:b2205946_duonghuuluan_luanvan/core/network/error_handler.dart';
+import 'package:b2205946_duonghuuluan_luanvan/injection_container.dart';
 import 'package:dio/dio.dart';
 
 class PushNotificationApi {
+  final Dio _dio = getIt<Dio>();
+
   Future<void> registerDevice({
     required String platform,
     required String pushToken,
   }) async {
     try {
-      await DioClient.instance.post(
+      await _dio.post(
         ApiEndpoints.pushDevices,
         data: {
           "platform": platform,
@@ -23,7 +25,7 @@ class PushNotificationApi {
 
   Future<void> deactivateDevice(String pushToken) async {
     try {
-      await DioClient.instance.delete(
+      await _dio.delete(
         ApiEndpoints.pushDevices,
         queryParameters: {
           "push_token": pushToken,
