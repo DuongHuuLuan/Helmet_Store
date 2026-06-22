@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'evaluate_item_model.dart';
+import 'evaluate_page_model.dart';
 
 part 'product_evaluate_page_model.g.dart';
 
@@ -50,21 +51,18 @@ class EvaluateRateCountModel {
 class ProductEvaluatePageModel {
   final ProductEvaluateSummaryModel? summary;
   final List<EvaluateItemModel>? items;
-  final int? page;
-  @JsonKey(name: 'per_page')
-  final int? perPage;
-  final int? total;
-  @JsonKey(name: 'total_pages')
-  final int? totalPages;
+  final EvaluatePaginationMetaModel meta;
 
   ProductEvaluatePageModel({
     this.summary,
     this.items,
-    this.page,
-    this.perPage,
-    this.total,
-    this.totalPages,
+    required this.meta,
   });
+
+  int get page => meta.page;
+  int get perPage => meta.perPage;
+  int get total => meta.total;
+  int get totalPages => meta.totalPages;
 
   factory ProductEvaluatePageModel.fromJson(Map<String, dynamic> json) =>
       _$ProductEvaluatePageModelFromJson(json);

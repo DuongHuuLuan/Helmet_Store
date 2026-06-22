@@ -38,10 +38,10 @@ class EvaluateMapper {
   static EvaluatePage pageFromModel(EvaluatePageModel model) {
     return EvaluatePage(
       items: (model.items ?? []).map(fromModel).toList(),
-      page: model.page ?? 1,
-      perPage: model.perPage ?? 10,
-      total: model.total ?? 0,
-      totalPages: model.totalPages ?? 0,
+      page: model.page,
+      perPage: model.perPage,
+      total: model.total,
+      totalPages: model.totalPages,
     );
   }
 
@@ -59,10 +59,10 @@ class EvaluateMapper {
             .toList(),
       ),
       items: (model.items ?? []).map(fromModel).toList(),
-      page: model.page ?? 1,
-      perPage: model.perPage ?? 10,
-      total: model.total ?? 0,
-      totalPages: model.totalPages ?? 0,
+      page: model.page,
+      perPage: model.perPage,
+      total: model.total,
+      totalPages: model.totalPages,
     );
   }
 
