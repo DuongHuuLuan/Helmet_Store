@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:b2205946_duonghuuluan_luanvan/core/notifications/push_notification_api.dart';
-import 'package:b2205946_duonghuuluan_luanvan/core/storage/secure_storage.dart';
+import 'package:b2205946_duonghuuluan_luanvan/injection_container.dart' as di;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -32,7 +33,7 @@ class PushNotificationService {
   final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
   final PushNotificationApi _api = PushNotificationApi();
-  final SecureStorage _storage = SecureStorage();
+  final SharedPreferences _prefs = di.getIt<SharedPreferences>();
 
   GoRouter? _router;
   StreamSubscription<String>? _tokenRefreshSubscription;
@@ -84,7 +85,7 @@ class PushNotificationService {
 
     _isSyncing = true;
     try {
-      final accessToken = await _storage.getAccessToken();
+      final accessToken = _prefs.getString("access_token");
       if (accessToken == null || accessToken.isEmpty) {
         return;
       }
@@ -107,7 +108,7 @@ class PushNotificationService {
         return;
       }
 
-      final oldToken = await _storage.getPushToken();
+      final oldToken = _prefs.getString("push_token");
       if (oldToken != null && oldToken.isNotEmpty && oldToken != token) {
         try {
           await _api.deactivateDevice(oldToken);
@@ -118,7 +119,7 @@ class PushNotificationService {
         platform: _resolvePlatformName(),
         pushToken: token,
       );
-      await _storage.savePushToken(token);
+      await _prefs.setString("push_token", token);
     } catch (e) {
       debugPrint("Push sync failed: $e");
     } finally {
@@ -127,14 +128,14 @@ class PushNotificationService {
   }
 
   Future<void> deactivateCurrentDevice() async {
-    final pushToken = await _storage.getPushToken();
+    final pushToken = _prefs.getString("push_token");
     if (pushToken == null || pushToken.isEmpty) {
       return;
     }
 
-    final accessToken = await _storage.getAccessToken();
+    final accessToken = _prefs.getString("access_token");
     if (accessToken == null || accessToken.isEmpty) {
-      await _storage.deletePushToken();
+      await _prefs.remove("push_token");
       return;
     }
 
@@ -143,7 +144,7 @@ class PushNotificationService {
     } catch (e) {
       debugPrint("Push deactivate failed: $e");
     } finally {
-      await _storage.deletePushToken();
+      await _prefs.remove("push_token");
     }
   }
 
@@ -168,9 +169,7 @@ class PushNotificationService {
             _handleNotificationNavigation(Map<String, dynamic>.from(data));
             return;
           }
-        } catch (_) {
-          // Fall back to generic chat route.
-        }
+        } catch (_) {}
 
         _openRouteOrDefer("/chat");
       },
@@ -267,9 +266,7 @@ class PushNotificationService {
   }
 
   void _flushPendingNavigation() {
-    if (_pendingNavigationPath != null &&
-        _router != null &&
-        _navigationReady) {
+    if (_pendingNavigationPath != null && _router != null && _navigationReady) {
       final path = _pendingNavigationPath!;
       _pendingNavigationPath = null;
       _router!.go(path);
