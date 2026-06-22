@@ -10,10 +10,13 @@ class CategoryRemoteDataSource {
 
   CategoryRemoteDataSource(this._service);
 
-  Future<Either<Failure, List<Category>>> getAll({int? page, int? perPage}) async {
+  Future<Either<Failure, List<Category>>> getAll({
+    int? page,
+    int? perPage,
+  }) async {
     try {
       final response = await _service.getAll(page: page, perPage: perPage);
-      return Right(response.data.map(CategoryMapper.fromModel).toList());
+      return Right(response.data.items.map(CategoryMapper.fromModel).toList());
     } on DioException catch (e) {
       return Left(Failure.fromDio(e));
     }

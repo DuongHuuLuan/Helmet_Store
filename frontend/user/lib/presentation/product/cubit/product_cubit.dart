@@ -1,4 +1,3 @@
-import 'package:b2205946_duonghuuluan_luanvan/presentation/product/cubit/product_state.dart';
 import 'package:b2205946_duonghuuluan_luanvan/domain/entity/product/product.dart';
 import 'package:b2205946_duonghuuluan_luanvan/domain/entity/product/product_detail.dart';
 import 'package:b2205946_duonghuuluan_luanvan/domain/entity/product/product_extension.dart';
@@ -6,8 +5,8 @@ import 'package:b2205946_duonghuuluan_luanvan/domain/entity/product/product_imag
 import 'package:b2205946_duonghuuluan_luanvan/domain/usecase/product/get_product_detail_usecase.dart';
 import 'package:b2205946_duonghuuluan_luanvan/domain/usecase/product/get_products_usecase.dart';
 import 'package:b2205946_duonghuuluan_luanvan/domain/usecase/warehouse/get_total_stock_usecase.dart';
+import 'package:b2205946_duonghuuluan_luanvan/presentation/product/cubit/product_state.dart';
 import 'package:bloc/bloc.dart';
-
 
 class ProductCubit extends Cubit<ProductState> {
   final GetProductsUseCase _getProducts;
@@ -113,9 +112,11 @@ class ProductCubit extends Cubit<ProductState> {
   }
 
   List<Product> _filterProductsForUser(List<Product> input) {
-    return input
-        .where((p) => p.productDetails.any((ProductDetail d) => d.isActive))
+    for (final p in input) {}
+    final output = input
+        .where((p) => p.productDetails.any((d) => d.isActive))
         .toList();
+    return output;
   }
 
   Future<void> getAllProduct({
@@ -135,7 +136,8 @@ class ProductCubit extends Cubit<ProductState> {
       keyword: _currentKeyword.isEmpty ? null : _currentKeyword,
     );
     result.fold(
-      (failure) => emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
       (list) {
         final filtered = _filterProductsForUser(list);
         if (page != null || perPage != null) {
@@ -191,7 +193,7 @@ class ProductCubit extends Cubit<ProductState> {
   Future<void> loadMoreProducts() async {
     if (_isLoadingMore || !_hasMore) return;
     _isLoadingMore = true;
-    emit(state.copyWith()); // trigger rebuild
+    emit(state.copyWith());
     final nextPage = _page + 1;
     final result = await _getProducts(
       categoryId: _currentCategoryId,
@@ -223,7 +225,8 @@ class ProductCubit extends Cubit<ProductState> {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     final result = await _getProductDetail(id);
     result.fold(
-      (failure) => emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
       (product) {
         emit(state.copyWith(isLoading: false, product: product));
         _resetSelection();
@@ -331,14 +334,12 @@ class ProductCubit extends Cubit<ProductState> {
       colorId: detail.colorId,
       sizeId: detail.sizeId,
     );
-    result.fold(
-      (_) => null,
-      (stock) {
-        _availableQuantity = stock.quantity;
-        if (_quantity > stock.quantity && stock.quantity > 0) _quantity = stock.quantity;
-        if (stock.quantity <= 0) _quantity = 1;
-      },
-    );
+    result.fold((_) => null, (stock) {
+      _availableQuantity = stock.quantity;
+      if (_quantity > stock.quantity && stock.quantity > 0)
+        _quantity = stock.quantity;
+      if (stock.quantity <= 0) _quantity = 1;
+    });
     _stockLoading = false;
     emit(state.copyWith());
   }

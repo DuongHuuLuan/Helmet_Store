@@ -1,6 +1,5 @@
 import 'package:b2205946_duonghuuluan_luanvan/core/constants/app_constants.dart';
 import 'package:b2205946_duonghuuluan_luanvan/core/network/auth_interceptor.dart';
-import 'package:b2205946_duonghuuluan_luanvan/core/storage/secure_storage.dart';
 import 'package:b2205946_duonghuuluan_luanvan/data/services/auth_service.dart';
 import 'package:b2205946_duonghuuluan_luanvan/data/datasources/remote/auth_remote_data_source.dart';
 import 'package:b2205946_duonghuuluan_luanvan/data/datasources/local/auth_local_data_source.dart';
@@ -110,6 +109,7 @@ import 'package:b2205946_duonghuuluan_luanvan/presentation/helmet_designer/cubit
 import 'package:b2205946_duonghuuluan_luanvan/presentation/order/cubit/order_cubit.dart';
 import 'package:b2205946_duonghuuluan_luanvan/presentation/product/cubit/product_cubit.dart';
 import 'package:b2205946_duonghuuluan_luanvan/presentation/profile/cubit/profile_cubit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
@@ -118,7 +118,8 @@ final getIt = GetIt.instance;
 
 Future<void> init() async {
   // Core
-  getIt.registerLazySingleton<SecureStorageService>(() => SecureStorageImpl());
+  final prefs = await SharedPreferences.getInstance();
+  getIt.registerLazySingleton<SharedPreferences>(() => prefs);
   getIt.registerLazySingleton(() {
     final baseUrl = AppConstants.baseUrl;
     final headers = <String, dynamic>{'Content-Type': 'application/json'};
@@ -137,10 +138,8 @@ Future<void> init() async {
     if (kDebugMode) {
       dio.interceptors.add(
         LogInterceptor(
-          requestBody: false,
-          responseBody: false,
-          requestHeader: false,
-          responseHeader: false,
+          requestBody: true,
+          responseBody: true,
         ),
       );
     }
@@ -162,7 +161,7 @@ Future<void> init() async {
 
   // Local DataSources
   getIt.registerLazySingleton<AuthLocalDataSource>(
-    () => AuthLocalDataSource(getIt<SecureStorageService>()),
+    () => AuthLocalDataSource(getIt<SharedPreferences>()),
   );
 
   // Remote DataSources

@@ -1,19 +1,18 @@
 import 'dart:async';
 
 import 'package:b2205946_duonghuuluan_luanvan/core/widgets/app_logo_loader.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-
-import 'package:b2205946_duonghuuluan_luanvan/presentation/cart/view/widget/cart_drawer.dart';
-import 'package:b2205946_duonghuuluan_luanvan/presentation/cart/cubit/cart_cubit.dart';
-import 'package:b2205946_duonghuuluan_luanvan/presentation/category/cubit/category_cubit.dart';
 import 'package:b2205946_duonghuuluan_luanvan/domain/entity/category/category.dart';
 import 'package:b2205946_duonghuuluan_luanvan/domain/entity/product/product.dart';
+import 'package:b2205946_duonghuuluan_luanvan/presentation/cart/cubit/cart_cubit.dart';
+import 'package:b2205946_duonghuuluan_luanvan/presentation/cart/view/widget/cart_drawer.dart';
+import 'package:b2205946_duonghuuluan_luanvan/presentation/category/cubit/category_cubit.dart';
 import 'package:b2205946_duonghuuluan_luanvan/presentation/product/cubit/product_cubit.dart';
 import 'package:b2205946_duonghuuluan_luanvan/presentation/product/view/widget/product_card.dart';
 import 'package:b2205946_duonghuuluan_luanvan/presentation/product/view/widget/product_search_field.dart';
 import 'package:b2205946_duonghuuluan_luanvan/presentation/product/view/widget/product_sections.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class ProductPage extends StatefulWidget {
   final String initialKeyword;
@@ -115,6 +114,12 @@ class _ProductPageState extends State<ProductPage> {
     final List<Category> categories = categoryState.categories;
     final List<Product> products = productVm.products;
     final bool isSearching = _keyword.isNotEmpty;
+    debugPrint(
+      '[UI] categories.length=${categories.length} '
+      'products.length=${products.length} '
+      'isLoading=${productVm.isLoading} '
+      'errorMessage=${productVm.errorMessage}',
+    );
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,

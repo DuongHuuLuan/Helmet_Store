@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:b2205946_duonghuuluan_luanvan/core/constants/app_constants.dart';
-import 'package:b2205946_duonghuuluan_luanvan/core/storage/secure_storage.dart';
 import 'package:b2205946_duonghuuluan_luanvan/injection_container.dart' as di;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:b2205946_duonghuuluan_luanvan/presentation/chat/cubit/chat_state.dart';
 import 'package:b2205946_duonghuuluan_luanvan/domain/entity/chat/chat_conversation.dart';
 import 'package:b2205946_duonghuuluan_luanvan/domain/entity/chat/chat_message.dart';
@@ -26,7 +26,7 @@ class ChatCubit extends Cubit<ChatState> {
   final RecallMessageUseCase _recallMessage;
   final MarkConversationReadUseCase _markConversationRead;
   final AddToCartActionUseCase _addToCartAction;
-  final SecureStorageService _storage = di.getIt<SecureStorageService>();
+  final SharedPreferences _prefs = di.getIt<SharedPreferences>();
 
   ChatCubit(
     this._getConversations,
@@ -265,7 +265,7 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   Future<void> _connectSocket(int conversationId) async {
-    final token = await _storage.getAccessToken();
+    final token = _prefs.getString("access_token");
     if (token == null || token.isEmpty) return;
 
     final uri = _buildSocketUri(conversationId, token);

@@ -10,6 +10,7 @@ class WarehouseStockModel {
   final int colorId;
   @JsonKey(name: 'size_id')
   final int sizeId;
+  @JsonKey(name: 'total_quantity')
   final int quantity;
 
   WarehouseStockModel({

@@ -1,16 +1,15 @@
-import 'package:b2205946_duonghuuluan_luanvan/core/widgets/app_logo_loader.dart';
-import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-
-import 'package:b2205946_duonghuuluan_luanvan/injection_container.dart' as di;
 import 'package:b2205946_duonghuuluan_luanvan/core/theme/colors.dart';
 import 'package:b2205946_duonghuuluan_luanvan/core/utils/currency_ext.dart';
+import 'package:b2205946_duonghuuluan_luanvan/core/widgets/app_logo_loader.dart';
 import 'package:b2205946_duonghuuluan_luanvan/domain/entity/evaluate/evaluate.dart';
 import 'package:b2205946_duonghuuluan_luanvan/domain/entity/product/product.dart';
-import 'package:b2205946_duonghuuluan_luanvan/domain/entity/product/product_extension.dart';
 import 'package:b2205946_duonghuuluan_luanvan/domain/entity/product/product_detail.dart';
+import 'package:b2205946_duonghuuluan_luanvan/domain/entity/product/product_extension.dart';
 import 'package:b2205946_duonghuuluan_luanvan/domain/usecase/evaluate/get_product_evaluates_usecase.dart';
 import 'package:b2205946_duonghuuluan_luanvan/domain/usecase/warehouse/get_total_stock_usecase.dart';
+import 'package:b2205946_duonghuuluan_luanvan/injection_container.dart' as di;
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
 
 class ProductCard extends StatefulWidget {
   final Product product;
@@ -208,7 +207,10 @@ class _ProductCardState extends State<ProductCard>
         if (mounted) setState(() => _isStockLoading = false);
       },
       (stock) {
-        if (!mounted || widget.product.id != productId) return;
+        if (!mounted || widget.product.id != productId) {
+          if (mounted) setState(() => _isStockLoading = false);
+          return;
+        }
         setState(() {
           _availableQuantity = stock.quantity;
           _isStockLoading = false;
@@ -226,7 +228,10 @@ class _ProductCardState extends State<ProductCard>
     }
 
     final summary = await _evaluateRequests.putIfAbsent(productId, () async {
-      final result = await di.getIt<GetProductEvaluatesUseCase>()(productId: productId, perPage: 1);
+      final result = await di.getIt<GetProductEvaluatesUseCase>()(
+        productId: productId,
+        perPage: 1,
+      );
       return result.fold(
         (_) {
           _evaluateRequests.remove(productId);

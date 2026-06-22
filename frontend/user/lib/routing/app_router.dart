@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:b2205946_duonghuuluan_luanvan/core/navigation/app_route_transitions.dart';
 import 'package:b2205946_duonghuuluan_luanvan/core/theme/colors.dart';
 import 'package:b2205946_duonghuuluan_luanvan/core/widgets/app_logo_loader.dart';
-import 'package:b2205946_duonghuuluan_luanvan/core/storage/secure_storage.dart';
 import 'package:b2205946_duonghuuluan_luanvan/presentation/auth/view/login_page.dart';
 import 'package:b2205946_duonghuuluan_luanvan/presentation/auth/view/register_page.dart';
 import 'package:b2205946_duonghuuluan_luanvan/presentation/auth/cubit/auth_cubit.dart';
@@ -30,11 +29,12 @@ import 'package:b2205946_duonghuuluan_luanvan/presentation/profile/view/profile_
 import 'package:b2205946_duonghuuluan_luanvan/presentation/profile/view/profile_vouchers_page.dart';
 import 'package:b2205946_duonghuuluan_luanvan/injection_container.dart' as di;
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
   static GoRouter createRouter(AuthCubit authCubit) {
-    final SecureStorageService storage = di.getIt<SecureStorageService>();
+    final SharedPreferences storage = di.getIt<SharedPreferences>();
 
     final router = GoRouter(
       initialLocation: "/",
@@ -68,7 +68,7 @@ class AppRouter {
 
         if (fullLocation.isNotEmpty && fullLocation != "/" && !isPaymentFlow) {
           unawaited(
-            storage.saveLastRoute(fullLocation).catchError((e) => null),
+            storage.setString("last_route", fullLocation),
           );
         }
 

@@ -7,6 +7,7 @@ class AuthResultMapper {
     return AuthResult(
       user: UserMapper.fromModel(response.user),
       accessToken: response.accessToken,
+      refreshToken: response.refreshToken,
     );
   }
 }
