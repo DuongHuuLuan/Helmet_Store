@@ -5,9 +5,9 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from app.db.base import Base
-from app.db.session import engine
-from app.models import *
+from app.infrastructure.database.base import Base
+from app.infrastructure.database.session import engine
+from app.infrastructure.database.models import *
 # from app.models.user import User
 # from app.models.profile import Profile
 # from app.models.category import Category

@@ -6,30 +6,30 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 import app.core.cloudinary
-from app.api.endpoints import auth
-from app.api.endpoints import cart
-from app.api.endpoints import category
-from app.api.endpoints import chat
-from app.api.endpoints import dashboard
-from app.api.endpoints import delivery
-from app.api.endpoints import design
-from app.api.endpoints import discount
-from app.api.endpoints import distributor
-from app.api.endpoints import evaluate
-from app.api.endpoints import ghn
-from app.api.endpoints import image_url
-from app.api.endpoints import order
-from app.api.endpoints import payment
-from app.api.endpoints import product
-from app.api.endpoints import product_detail
-from app.api.endpoints import profile
-from app.api.endpoints import push_notification
-from app.api.endpoints import receipt
-from app.api.endpoints import statistics
-from app.api.endpoints import sticker
-from app.api.endpoints import user
-from app.api.endpoints import vnpay
-from app.api.endpoints import warehouse
+from app.presentation.api import auth
+from app.presentation.api import cart
+from app.presentation.api import category
+from app.presentation.api import chat
+from app.presentation.api import dashboard
+from app.presentation.api import delivery
+from app.presentation.api import design
+from app.presentation.api import discount
+from app.presentation.api import distributor
+from app.presentation.api import evaluate
+from app.presentation.api import ghn
+from app.presentation.api import image_url
+from app.presentation.api import order
+from app.presentation.api import payment
+from app.presentation.api import product
+from app.presentation.api import product_detail
+from app.presentation.api import profile
+from app.presentation.api import push_notification
+from app.presentation.api import receipt
+from app.presentation.api import statistics
+from app.presentation.api import sticker
+from app.presentation.api import user
+from app.presentation.api import vnpay
+from app.presentation.api import warehouse
 
 app = FastAPI(title="Helmet Shop", version="1.0.0")
 
