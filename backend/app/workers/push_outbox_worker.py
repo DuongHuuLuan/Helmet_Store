@@ -2,8 +2,8 @@ import logging
 import time
 
 from app.core.config import settings
-from app.db.session import SessionLocal
-from app.services.push_outbox_service import PushOutboxService
+from app.infrastructure.database.session import SessionLocal
+from app.application.push.outbox_service import PushOutboxService
 
 
 logging.basicConfig(level=logging.INFO)

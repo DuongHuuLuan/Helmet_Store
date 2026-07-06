@@ -4,7 +4,8 @@ __pycache__/
 *$py.class
 venv/
 .venv/
-
+**/__pycache__/
+*.pyc
 # Môi trường
 .env
 
@@ -18,3 +19,6 @@ Thumbs.db
 app/core/firebase-credentials.json
 __pycache__/
 *.py[cod]
+
+# Logs
+uvicorn_*.txt
