@@ -24,10 +24,21 @@ def created_access_token(subject: Union[str, Any],role: str = None, expires_delt
             minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
         )
     
-    to_encode = {"exp": expire, "sub": str(subject)}
+    to_encode = {"exp": expire, "sub": str(subject), "type": "access"}
     if role:
         to_encode.update({"role": role})
 
+    encoded_jwt = jwt.encode(
+        to_encode,
+        settings.SECRET_KEY,
+        algorithm=settings.ALGORITHM
+    )
+    return encoded_jwt
+
+def create_refresh_token(subject: Union[str, Any]) -> str:
+    """Tạo Refresh Token có thời hạn dài hơn"""
+    expire = datetime.utcnow() + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    to_encode = {"exp": expire, "sub": str(subject), "type": "refresh"}
     encoded_jwt = jwt.encode(
         to_encode,
         settings.SECRET_KEY,

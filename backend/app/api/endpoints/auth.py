@@ -43,6 +43,16 @@ def login_admin(form_data: OAuth2PasswordRequestForm = Depends(),db: Session = D
     
     return auth_result
 
+class RefreshRequest(BaseModel):
+    refresh_token: str
+
+@router.post("/refresh")
+def refresh_token(body: RefreshRequest, db: Session = Depends(get_db)):
+    """
+    API cấp lại access_token mới dựa vào refresh_token
+    """
+    return auth_service.refresh_access_token(db, body.refresh_token)
+
 @router.post("/change-password")
 def change_password(
     password: PasswordChange,
